@@ -57,6 +57,9 @@ if [ "$NVERSION" -eq "021" ] || [ "$NVERSION" -eq "022" ]
   chmod -v 755 ../../../webfrontend/cgi/system/*
   chmod -v 755 ../../../webfrontend/cgi/system/setup/*
 
+  # Upgrade version number
+  /bin/sed -i "s:VERSION=0.2.1:VERSION=0.2.2:" ../../../config/system/general.cfg
+  
   echo "<OK>Upgrade successfully done to Version 0.2.2"
 
   exit 0
