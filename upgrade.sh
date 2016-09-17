@@ -57,6 +57,8 @@ if [ "$NVERSION" -eq "021" ] || [ "$NVERSION" -eq "022" ]
   chmod -v 755 ../../../webfrontend/cgi/system/*
   chmod -v 755 ../../../webfrontend/cgi/system/setup/*
 
+  echo "loxberry ALL = NOPASSWD: /usr/bin/dpkg" >> /etc/sudoers
+  
   # Upgrade version number
   /bin/sed -i "s:VERSION=0.2.1:VERSION=0.2.2:" ../../../config/system/general.cfg
   
