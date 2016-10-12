@@ -9,28 +9,32 @@ DIR=$(dirname $(readlink -f $0))
 echo "<INFO> My basedir: $DIR"
 cd $DIR
 
-# Current Version
+UPGRADEFOUND=0
+
+##################################################
+# Upgrade 0.2.1 to 0.2.2
+##################################################
+
+# Read Current Version
 if [ -f "../../../config/system/general.cfg" ]
 	then
 
 	VERSION=`cat ../../../config/system/general.cfg | grep VERSION= | xargs -d '=' | awk '{print $2}' | head -1`
 	NVERSION=`echo $VERSION | sed 's/\.//g'` # string with two dots cannot be compared in bash
-	echo "<INFO> Current LoxBerry Version: $VERSION"
 
 else
 
-  echo "<FAIL>Cannot find your system configuration. Aborting."
+  echo "<FAIL> Cannot find your system configuration. Aborting."
   exit 1;
 
 fi
 
-##################################################
-# Upgrade 0.2.1 to 0.2.2 / Upgrade 0.2.2 to 0.2.2
-##################################################
-if [ "$NVERSION" -eq "021" ] || [ "$NVERSION" -eq "022" ]
+if [ "$NVERSION" -eq "021" ]
   then
 
-  echo "<INFO>Upgrade will be done from $VERSION to 0.2.2"
+  UPGRADEFOUND=1
+
+  echo "<INFO> Upgrade will be done from $VERSION to 0.2.2"
 
   cp -v -r ./files/0.2.2/data/system/uninstall ../../../data/system/
   chown -v -R loxberry.loxberry ../../../data/system/uninstall
@@ -58,17 +62,66 @@ if [ "$NVERSION" -eq "021" ] || [ "$NVERSION" -eq "022" ]
   chmod -v 755 ../../../webfrontend/cgi/system/setup/*
 
   echo "loxberry ALL = NOPASSWD: /usr/bin/dpkg" >> /etc/sudoers
-  
+
   # Upgrade version number
   /bin/sed -i "s:VERSION=0.2.1:VERSION=0.2.2:" ../../../config/system/general.cfg
+
+  echo "<OK> Upgrade successfully done to Version 0.2.2"
+
+fi
+
+##################################################
+# Upgrade 0.2.2 to 0.2.3
+##################################################
+
+# Read Current Version
+if [ -f "../../../config/system/general.cfg" ]
+	then
+
+	VERSION=`cat ../../../config/system/general.cfg | grep VERSION= | xargs -d '=' | awk '{print $2}' | head -1`
+	NVERSION=`echo $VERSION | sed 's/\.//g'` # string with two dots cannot be compared in bash
+
+else
+
+  echo "<FAIL> Cannot find your system configuration. Aborting."
+  exit 1;
+
+fi
+
+if [ "$NVERSION" -eq "022" ]
+  then
+
+  UPGRADEFOUND=1
+
+  echo "<INFO> Upgrade will be done from $VERSION to 0.2.3"
+
+  cp -v ./files/0.2.3/templates/system/de/* ../../../templates/system/de/
+  cp -v ./files/0.2.3/templates/system/en/* ../../../templates/system/en/
+  chown -v -R loxberry.loxberry ../../../templates/system
   
-  echo "<OK>Upgrade successfully done to Version 0.2.2"
+  cp -v ./files/0.2.3/webfrontend/cgi/system/* ../../../webfrontend/cgi/system/
+  chown -v -R loxberry.loxberry ../../../webfrontend/cgi/system
+  chmod -v 755 ../../../webfrontend/cgi/system/*
+
+  cp -v ./files/0.2.3/sbin/* ../../../sbin/
+  chown -v -R loxberry.loxberry ../../../sbin  
+  chmod -v 755 ../../../sbin/*
+
+  # Upgrade version number
+  /bin/sed -i "s:VERSION=0.2.2:VERSION=0.2.3:" ../../../config/system/general.cfg
+
+  echo "<OK> Upgrade successfully done to Version 0.2.3"
+
+fi
+
+if [ "$UPGRADEFOUND" -eq "1" ]
+  then
 
   exit 0
 
 else
 
-  echo "<FAIL>Cannot find any upgrade for your version. Your version is $VERSION. Aborting."
+  echo "<FAIL> Cannot find any upgrade for your version. Your version is $VERSION. Aborting."
   exit 1
 
 fi
