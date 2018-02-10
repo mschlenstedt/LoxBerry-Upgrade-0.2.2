@@ -147,6 +147,7 @@ if [ "$NVERSION" -eq "023" ]
   chown -v -R loxberry:loxberry ../../../sbin  
   chmod -v 755 ../../../sbin/*
 
+  export DEBIAN_FRONTEND=noninteractive
   dpkg --configure -a
   apt-get -q -y update
   apt-get -q -y install php5-curl
