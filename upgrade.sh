@@ -139,10 +139,15 @@ if [ "$NVERSION" -eq "023" ]
 
   echo "<INFO> Upgrade will be done from $VERSION to 0.2.4"
 
+  cp -v ./files/0.2.4/webfrontend/cgi/system/* ../../../webfrontend/cgi/system/
+  chown -v -R loxberry:loxberry ../../../webfrontend/cgi/system
+  chmod -v 755 ../../../webfrontend/cgi/system/*
+
   cp -v ./files/0.2.4/sbin/* ../../../sbin/
   chown -v -R loxberry:loxberry ../../../sbin  
   chmod -v 755 ../../../sbin/*
 
+  dpkg --configure -a
   apt-get -q -y update
   apt-get -q -y install php5-curl
   apt-get -q -y install curl
