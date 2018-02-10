@@ -114,6 +114,46 @@ if [ "$NVERSION" -eq "022" ]
 
 fi
 
+##################################################
+# Upgrade 0.2.3 to 0.2.4
+##################################################
+
+# Read Current Version
+if [ -f "../../../config/system/general.cfg" ]
+	then
+
+	VERSION=`cat ../../../config/system/general.cfg | grep VERSION= | xargs -d '=' | awk '{print $2}' | head -1`
+	NVERSION=`echo $VERSION | sed 's/\.//g'` # string with two dots cannot be compared in bash
+
+else
+
+  echo "<FAIL> Cannot find your system configuration. Aborting."
+  exit 1;
+
+fi
+
+if [ "$NVERSION" -eq "023" ]
+  then
+
+  UPGRADEFOUND=1
+
+  echo "<INFO> Upgrade will be done from $VERSION to 0.2.4"
+
+  cp -v ./files/0.2.4/sbin/* ../../../sbin/
+  chown -v -R loxberry:loxberry ../../../sbin  
+  chmod -v 755 ../../../sbin/*
+
+  apt-get -q -y update
+  apt-get -q -y install php5-curl
+  apt-get -q -y install curl
+
+  # Upgrade version number
+  /bin/sed -i "s:VERSION=0.2.3:VERSION=0.2.4:" ../../../config/system/general.cfg
+
+  echo "<OK> Upgrade successfully done to Version 0.2.4"
+
+fi
+
 if [ "$UPGRADEFOUND" -eq "1" ]
   then
 
